@@ -1,0 +1,85 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust</title>
+</head>
+<body> -->
+
+<div class="row">
+    <div class="col-md-8 offset-2">
+        <% layout("/layouts/boilerplate") %>
+            <h1>Create a new listing</h1><br><br>
+            <form method="POST" action="/listings" novalidate  class="needs-validation" enctype="multipart/form-data">     
+                <!-- To implement Bootstrap validation  -->
+                <div>
+                    <label for="title" class="form-label">Title</label>
+                    <input name="listing[title]" type="text" placeholder="Enter Title" class="form-control" required >
+                
+                <!-- Below div is use to add a msg on success i.e on correct entries a msg will appear -->
+                <div class="valid-feedback">Title look GOOD</div>
+                </div>
+
+                <br>
+                <div>
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="listing[description]" placeholder="Enter Description"
+                        class="form-control"  required  ></textarea>
+                        <div class="invalid-feedback">Enter a short description</div>
+                    
+                </div>
+
+                <br>
+             
+
+                <br/>
+                <div>
+                    <label for="image" class="form-label">Upload Image</label> 
+                    <input name="listing[image]" type="file" placeholder="Enter Image URL" class="form-control" required>
+                </div>
+
+                <br>
+                <div>
+                    <label for="price" class="form-label">Price</label>
+                    <input name="listing[price]" type="number" placeholder="1200" class="form-control"  required >
+
+                    <div class="invalid-feedback">Price should be valid</div>
+                
+                </div>
+
+                <br>
+
+                <div class="row">
+                    
+
+
+                        <div class="col-md-4">
+                            <label for="location" class="form-label">Location</label>
+                            <input name="listing[location]" type="text" placeholder="Pune"
+                                class="form-control"  required >
+                                <div class="invalid-feedback">Location should be valid</div>
+                            
+                        </div>
+
+                        <br>
+                        <div class="col-md-8">
+                            <label for="country" class="form-label">Country</label>
+                            <input name="listing[country]" type="text" placeholder="India"
+                                class="form-control"  required >
+
+                                <div class="invalid-feedback">Country should be valid</div>
+                    
+                        </div>
+
+                        <br>
+                    
+                </div>
+                <br>
+                <button class="btn btn-dark" style="background-color: #fe424d;">ADD</button>
+                <br><br><br>
+            </form>
+    </div>
+</div>
+
+<script src="/js/script.js"></script>
