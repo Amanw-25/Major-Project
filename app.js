@@ -51,32 +51,41 @@ app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "/public")));
 
 
-const store=MongoStore.create({
-    mongoUrl:dbUrl,
-    crypto:{
-        secret:process.env.SECRET
+
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.env.SECRET
     },
-    touchAfter:24 * 3600,
+    touchAfter: 24 * 3600,
 });
 
-store.on("error",()=>{
-    console.log("ERROR is MONGO SESSION STORE",err);
+
+
+
+store.on("error", (err) => {
+    console.log("ERROR in MONGO SESSION STORE", err);
 });
 
-const sessionOptions={
+console.log('Secret from process.env:', process.env.SECRET);
+
+
+
+const sessionOptions = {
     store: store,
-    secret:"mysupersecretcode",
-    resave:false,
-    saveUninitialized:true,
-    cookie:{
-        expires:Date.now()+ 7*24*60*60*1000,        // Cookie expires after 7 days 
-        maxAge: 7*24*60*60*1000,
-        httpOnly:true,
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000, // Cookie expires after 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
     }
 }
 
 app.use(session(sessionOptions));
 app.use(flash());
+
 
 
 app.use(passport.initialize());
@@ -86,78 +95,17 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 
-app.use((req,res,next)=>{
-    res.locals.success=req.flash("success");
-    res.locals.error=req.flash("error");
-    res.locals.currUser=req.user;
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.currUser = req.user; // Make sure this middleware is placed after authentication middleware
     next();
-})
+});
 
-
-// app.get("/demouser",async(req,res)=>{
-//     let fakeUser=new User({
-//         email:"student@gmail.com",
-//         username:"delta-student"
-//     });
-
-//     let registerUser=await User.register(fakeUser,"helloworld");
-//     res.send(registerUser);
-// })
-
-
-
-// app.use((req,res,next)=>{
-//     req.locals.success=req.flash("success");
-//     next();
-// });
 
 app.use("/listings",listingsRouter);
 app.use("/listings/:id/reviews",reviewsRouter);   
 app.use("/",userRouter);
-
-// /listings/:id/reviews will be common in all the route there removed from review.js file of routes folder.
-// This is also know as parent route
-// In this id don't get pass on to the route hence use mergeparams to combine parent and child route{i.e uncommon part}
-
-
-
-
-// // REVIEW ROUTE
-// app.post("/listings/:id/reviews",
-//     validateReview,     // It is a middleware
-//     WrapAsync(async(req,res)=>{
-//     let listing=await Listing.findById(req.params.id);
-//     let newReview=new Review(req.body.review);
-
-//     listing.reviews.push(newReview);
-
-//     await newReview.save();
-//     await listing.save();
-
-
-//     // console.log("New review send");
-//     // res.send("New review send");
-
-//     // res.send("New review added");
-//     res.redirect(`/listings/${listing._id}`);
-    
-
-// }));
-
-// //DELETE REVIEW ROUTE
-// app.delete("/listings/:id/reviews/:reviewId",
-//     wrapAsync(async(req,res)=>{
-//         let {id,reviewId}=req.params;
-
-//         //PULL:- Review array ke andar jo bhi reviewId se match karega usko listing se remove kar do.
-//         await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
-//         await Review.findByIdAndDelete(reviewId);        //Delete from review collection
-
-//         res.redirect(`/listings/${id}`);
-
-// }));
-
-
 
 
 app.all("*", (req, res, next) => {                       // If any route other than above then show this error
