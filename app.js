@@ -111,6 +111,7 @@ if(process.env.NODE_ENV != "production"){
     
     app.all("*", (req, res, next) =>{
         next(new ExpressError(404, "Page Not Found!"));
+        res.redirect("/listings");
     });
     
     //middleware for error handling
